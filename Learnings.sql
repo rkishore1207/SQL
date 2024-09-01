@@ -23,3 +23,13 @@ HAVING COUNT(*) > 1
 
 ALTER TABLE config.Employee
 ADD CONSTRAINT CK_Employee_Salary CHECK (emp_salary > 1000 AND emp_salary < 100000000)
+
+--Unique Constraint
+ALTER TABLE config.Employee
+ADD CONSTRAINT UQ_Employee_Email
+UNIQUE(emp_email)
+
+-- Difference Between WHERE and HAVING
+-- * Where can be used in Select, Insert, Update and Delete but Having only be used in Select
+-- * Where filters the rows before aggregation, Having filters after aggregation
+-- * Could not use Aggretion Function on Where clause whereas we could use Aggregate Function on Having Clause
