@@ -47,3 +47,26 @@ SELECT Category ,
 FROM CategoryInitialLetter
 GROUP BY Category
 ORDER BY Category
+
+
+--You'll need to calculate the century for each event date, and group by this.
+WITH tblCentury AS (
+	SELECT 
+		(LEFT(YEAR(EventDate),2) + 1) AS Century, 
+		COUNT(*) AS NumberOfEvents
+	FROM 
+		tblEvent
+	GROUP BY 
+		LEFT(YEAR(EventDate),2) WITH CUBE
+)
+SELECT 
+	CASE
+		WHEN RIGHT(Century,1) = 1 THEN CONCAT(Century,'st Century')
+		WHEN RIGHT(Century,1) = 2 THEN CONCAT(Century,'nd Century')
+		WHEN RIGHT(Century,1) = 3 THEN CONCAT(Century,'rd Century')
+		WHEN Century IS NULL THEN 'Grand Total'
+		ELSE CONCAT(Century,'th Century')
+	END AS Century,
+	NumberOfEvents
+FROM 
+	tblCentury
