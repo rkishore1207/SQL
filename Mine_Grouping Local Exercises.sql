@@ -70,3 +70,36 @@ SELECT
 	NumberOfEvents
 FROM 
 	tblCentury
+
+
+-- Print the Month Name by the Month Number
+ALTER FUNCTION GetMonthByNumber(@Number INT)
+RETURNS NVARCHAR(100)
+AS
+BEGIN
+	DECLARE 
+		@Result NVARCHAR(100)
+	IF(@Number >= 1 AND @Number <= 12)
+	BEGIN
+		DECLARE 
+			@GivenDate DATETIME
+			SET @GivenDate = DATEADD(MONTH, @Number - 1, DATEDIFF(MONTH,GETDATE(),GETDATE()))			
+			SET @Result = DATENAME(MONTH,@GivenDate)
+	END
+	ELSE
+		SET @Result = 'Give a Valid Number'
+	RETURN @Result
+END
+
+SP_HELPTEXT GetMonthByNumber
+
+SELECT dbo.GetMonthByNumber(-13) AS [Month]
+
+DECLARE @Count INT = 1
+WHILE(@Count <= 12)
+BEGIN
+	PRINT dbo.GetMonthByNumber(@Count)
+	SET @Count = @Count + 1
+END
+
+-------------------------
