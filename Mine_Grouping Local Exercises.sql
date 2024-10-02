@@ -47,3 +47,59 @@ SELECT Category ,
 FROM CategoryInitialLetter
 GROUP BY Category
 ORDER BY Category
+
+
+--You'll need to calculate the century for each event date, and group by this.
+WITH tblCentury AS (
+	SELECT 
+		(LEFT(YEAR(EventDate),2) + 1) AS Century, 
+		COUNT(*) AS NumberOfEvents
+	FROM 
+		tblEvent
+	GROUP BY 
+		LEFT(YEAR(EventDate),2) WITH CUBE
+)
+SELECT 
+	CASE
+		WHEN RIGHT(Century,1) = 1 THEN CONCAT(Century,'st Century')
+		WHEN RIGHT(Century,1) = 2 THEN CONCAT(Century,'nd Century')
+		WHEN RIGHT(Century,1) = 3 THEN CONCAT(Century,'rd Century')
+		WHEN Century IS NULL THEN 'Grand Total'
+		ELSE CONCAT(Century,'th Century')
+	END AS Century,
+	NumberOfEvents
+FROM 
+	tblCentury
+
+
+-- Print the Month Name by the Month Number
+ALTER FUNCTION GetMonthByNumber(@Number INT)
+RETURNS NVARCHAR(100)
+AS
+BEGIN
+	DECLARE 
+		@Result NVARCHAR(100)
+	IF(@Number >= 1 AND @Number <= 12)
+	BEGIN
+		DECLARE 
+			@GivenDate DATETIME
+			SET @GivenDate = DATEADD(MONTH, @Number - 1, DATEDIFF(MONTH,GETDATE(),GETDATE()))			
+			SET @Result = DATENAME(MONTH,@GivenDate)
+	END
+	ELSE
+		SET @Result = 'Give a Valid Number'
+	RETURN @Result
+END
+
+SP_HELPTEXT GetMonthByNumber
+
+SELECT dbo.GetMonthByNumber(-13) AS [Month]
+
+DECLARE @Count INT = 1
+WHILE(@Count <= 12)
+BEGIN
+	PRINT dbo.GetMonthByNumber(@Count)
+	SET @Count = @Count + 1
+END
+
+-------------------------
