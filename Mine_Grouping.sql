@@ -48,3 +48,39 @@ GROUP BY
 	EN.EnemyName
 HAVING 
 	COUNT(EP.EpisodeId) > 1
+
+
+------------
+
+ALTER FUNCTION fnEpisodeDescription
+(
+	@Title NVARCHAR(MAX)
+)
+RETURNS 
+	NVARCHAR(100) 
+BEGIN
+	--DECLARE 
+	--	@Part NVARCHAR(100) = RIGHT(RTRIM(@Title), 8)
+	--RETURN (
+	--	CASE
+	--		WHEN @Part = '(Part 1)' THEN 'First Part'
+	--		WHEN @Part = '(Part 2)' THEN 'Second Part'
+	--		ELSE 'Single Episode'
+	--	END
+	--)
+	RETURN(
+		CASE
+			WHEN CHARINDEX('Part 1', @Title) <> 0 THEN 'First Part'
+			WHEN CHARINDEX('Part 2', @Title) <> 0 THEN 'Second Part'
+			ELSE 'Single Episode'
+		END
+	)
+END
+
+SELECT
+	dbo.fnEpisodeDescription(Title) AS EpisodeType,
+	COUNT(*) AS NumberOfEpisodes
+FROM 
+	tblEpisode
+GROUP BY 
+	dbo.fnEpisodeDescription(Title)
