@@ -83,4 +83,4 @@ SELECT
 FROM 
 	tblEpisode
 GROUP BY 
-	dbo.fnEpisodeDescription(Title)
+	dbo.fnEpisodeDescription(Title) 
