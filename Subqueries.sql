@@ -1,3 +1,4 @@
+---------------------------------
 SELECT 
 	EventName, 
 	EventDate, 
@@ -19,3 +20,21 @@ WHERE
 		)
 ORDER BY 
 	EventDate DESC
+-------------------------------
+SELECT 
+	EventName 
+FROM 
+	tblEvent 
+WHERE 
+	LEN(EventName) > 
+	(
+		SELECT 
+			AVG(TotalLength)
+		FROM 
+		(
+			SELECT 
+				LEN(EventName) AS TotalLength 
+			FROM tblEvent
+		) AS TotalLength
+	)
+--------------------------------
