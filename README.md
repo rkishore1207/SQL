@@ -53,3 +53,9 @@ DBCC CHECKIDENT(tableName,RESEED,0)
 ```
 
 * We could add index also to the view, it is called as **Indexed Views**. In oracle it will be called as **Materialized Views**.
+
+### Key Advantage of Stored Procedure
+* At first time, the stored procedure was executed it will create the `Execution Plan` and store that plan in the `Cache Memory`.
+* Execution Plan means, how the SQL engine will execute the order of the query that we wrote and from which table it would start like that, there are lot of combinatins are there for the SQL Engine.
+* So after the next time, SQL will take the **precompiled execution plan** from the cache and saves the time for **recompile**.
+* Hence Stored Procedure is the great to execute the set of query in a **Optimized way**.
