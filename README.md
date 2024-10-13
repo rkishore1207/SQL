@@ -63,3 +63,28 @@ DBCC CHECKIDENT(tableName,RESEED,0)
 * Execution Plan means, how the SQL engine will execute the order of the query that we wrote and from which table it would start like that, there are lot of combinatins are there for the SQL Engine.
 * So after the next time, SQL will take the **precompiled execution plan** from the cache and saves the time for **recompile**.
 * Hence Stored Procedure is the great to execute the set of query in a **Optimized way**.
+
+## Triggers
+It is a Query or some actions that will trigger by firing some actions or events(Insert or delete or update).
+> Trigger is based on table, any action related to that table triggers the trigger.
+* There are three types of Triggers
+    1. DML Triggers
+    2. DDL Triggers
+    3. Logon Triggers
+* DML Triggers are further classified into two types
+    1. For or Action Trigger
+    2. Instead Of Trigger
+### For or Action Trigger
+* It will trigger particular action, when the referenced table got any new rows.
+```SQL
+    CREATE TRIGGER tr_tblEvent_ForInsert
+    ON tblEvent
+    FOR INSERT
+    AS
+    BEGIN
+        SELECT * FROM inserted
+    END
+```
+* `Inserted` is the new table which was created by the trigger and it having the new records with the `same structure` of original table (where the trigger was created).
+* We should only access the Inserted table inside the **context of triggers only**.
+
