@@ -53,6 +53,10 @@ DBCC CHECKIDENT(tableName,RESEED,0)
 ```
 
 * We could add index also to the view, it is called as **Indexed Views**. In oracle it will be called as **Materialized Views**.
+### Limitations of Views
+* We could not use `Rules and Defaults` on Views.
+* We could not use `Order By` while creating the Views, unless we are using **Top** or For XML.
+* Could not able to create View with `Temporary tables`.
 
 ### Key Advantage of Stored Procedure
 * At first time, the stored procedure was executed it will create the `Execution Plan` and store that plan in the `Cache Memory`.
