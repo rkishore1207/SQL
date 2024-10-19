@@ -38,3 +38,59 @@ WHERE
 		) AS TotalLength
 	)
 --------------------------------
+SELECT 
+	C.CountryName 
+FROM 
+	tblCountry C
+WHERE 
+	(
+		SELECT 
+			COUNT(E.EventID) 
+		FROM 
+			tblEvent E 
+		WHERE 
+			E.CountryID = C.CountryID
+	) > 8
+ORDER BY 
+	C.CountryName
+-----------------------------------
+SELECT 
+	Tour_name, 
+	Attendance, 
+	(Attendance - ( SELECT 
+						AVG(Attendance) AS AvgAttendance 
+					FROM Tour)) AS Differences  
+FROM 
+	Tour
+WHERE 
+	Attendance > ( SELECT 
+						AVG(Attendance) AS AvgAttendance 
+				   FROM Tour)
+ORDER BY 
+	Attendance
+
+-----------------------------
+
+SELECT 
+	Title, 
+	Album_mins, 
+	Album_secs, 
+	(dbo.TotalLength(Album_mins, Album_secs) - (SELECT 
+													AVG(dbo.TotalLength(Album_mins, Album_secs)) 
+												 FROM Album)) AS LongerThanAverage
+FROM 
+	Album
+WHERE 
+	((dbo.TotalLength(Album_mins, Album_secs) - (SELECT 
+													AVG(dbo.TotalLength(Album_mins, Album_secs)) 
+												FROM Album)) BETWEEN 0 AND 60)
+ORDER BY LongerThanAverage DESC
+
+CREATE FUNCTION TotalLength(@Minutes INT, @Seconds INT)
+RETURNS INT
+AS
+BEGIN
+	RETURN (@Minutes * 60 + @Seconds)
+END
+
+-----------------
