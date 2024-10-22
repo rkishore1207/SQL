@@ -94,3 +94,19 @@ BEGIN
 END
 
 -----------------
+SELECT 
+	EventName, 
+	EventDetails 
+FROM 
+	tblEvent
+WHERE 
+	CountryID IN (  SELECT CountryID FROM tblCountry
+					ORDER BY CountryName DESC
+					OFFSET 30 ROWS) 
+AND 
+	CategoryID IN ( SELECT CategoryID FROM tblCategory
+					ORDER BY CategoryName DESC
+					OFFSET 15 ROWS)
+ORDER BY 
+	EventDate
+------------------
