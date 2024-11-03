@@ -88,3 +88,64 @@ It is a Query or some actions that will trigger by firing some actions or events
 * `Inserted` is the new table which was created by the trigger and it having the new records with the `same structure` of original table (where the trigger was created).
 * We should only access the Inserted table inside the **context of triggers only**.
 
+### For Update Trigger
+```SQL
+ALTER TRIGGER Tr_Employee_ForUpdate
+ON Employee
+FOR UPDATE
+AS
+BEGIN
+	CREATE TABLE #UpdatedEmployee(
+		[UID] UNIQUEIDENTIFIER,
+		[Name] VARCHAR(500),
+		Gender VARCHAR(50),
+		Email VARCHAR(500),
+		DateOfBirth DATETIME,
+		DepartmentId INT
+
+	)
+
+	INSERT INTO #UpdatedEmployee
+	SELECT * FROM inserted
+
+	WHILE (EXISTS(SELECT UID FROM #UpdatedEmployee))
+	BEGIN
+		DECLARE --Declaring the necessary variables
+			@UID UNIQUEIDENTIFIER, 
+			@OldName VARCHAR(500), @NewName VARCHAR(500),
+			@OldGender VARCHAR(50), @NewGender VARCHAR(50),
+			@OldEmail VARCHAR(500), @NewEmail VARCHAR(500),
+			@OldDateOfBirth DATETIME, @NewDateOfBirth DATETIME,
+			@OldDepartmentId VARCHAR(500), @NewDepartmentId VARCHAR(500)
+
+		SELECT TOP 1 @UID = UID FROM #UpdatedEmployee --Get the particular UID to fetch the old and new datas
+
+		SELECT --Get the respected Old and New Data
+			@OldName = D.[Name], @NewName = I.[Name],
+			@OldGender = D.Gender, @NewGender = I.Gender,
+			@OldEmail = D.Email, @NewEmail = I.Email,
+			@OldDateOfBirth = D.DateOfBirth, @NewDateOfBirth = I.DateOfBirth,
+			@OldDepartmentId = D.DepartmentId, @NewDepartmentId = I.DepartmentId
+		FROM inserted I
+		INNER JOIN deleted D ON I.UID = D.UID
+		WHERE I.UID = @UID
+
+		IF (@OldName <> @NewName) 
+			PRINT CONCAT('Name Changed from ', @OldName , ' to ' , @NewName)
+		IF (@OldGender <> @NewGender) 
+			PRINT CONCAT('Gender Changed from ', @OldGender , ' to ' , @NewGender)
+		IF (@OldEmail <> @NewEmail) 
+			PRINT CONCAT('Email Changed from ', @OldEmail , ' to ' , @NewEmail)
+		IF (@OldDateOfBirth <> @NewDateOfBirth) 
+			PRINT CONCAT('DateOfBirth Changed from ', CAST(@OldDateOfBirth AS DATE) , ' to ' , CAST(@NewDateOfBirth AS DATE))
+		IF (@OldDepartmentId <> @NewDepartmentId)
+		BEGIN
+			SELECT CONCAT('OldDepartment ', Name) FROM Department WHERE Id = @OldDepartmentId
+			SELECT CONCAT('NewDepartment ', Name) FROM Department WHERE Id = @NewDepartmentId
+		END
+
+		DELETE FROM #UpdatedEmployee WHERE [UID] = @UID
+	END
+END
+```
+
